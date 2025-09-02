@@ -5,7 +5,7 @@ import { Game } from '../../data/game';
 import { Contract } from '../../data/contract';
 import { DrawVO } from '../../data/drawVO';
 import { CommonModule, DatePipe } from '@angular/common';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ResultVO } from '../../data/resultVO';
 import { Role } from '../../data/role';
 import { PlayerDrawVO } from '../../data/player-drawVO';
