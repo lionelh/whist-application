@@ -5,11 +5,12 @@ import { Game } from '../../data/game';
 import { Contract } from '../../data/contract';
 import { DrawVO } from '../../data/drawVO';
 import { CommonModule, DatePipe } from '@angular/common';
-import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ResultVO } from '../../data/resultVO';
 import { Role } from '../../data/role';
 import { PlayerDrawVO } from '../../data/player-drawVO';
 import { Observable, of, switchMap, tap } from 'rxjs';
+import { DrawCreationForm } from './forms/draw-cretation';
 
 @Component({
   selector: 'wsw-event',
@@ -21,13 +22,13 @@ import { Observable, of, switchMap, tap } from 'rxjs';
 export class Event {
   private _dataService = inject(Data);
   private route = inject(ActivatedRoute);
-  private _fb = inject(UntypedFormBuilder);
+  private _fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private sub: any;
   id?: number;
   event: Game | undefined;
   draws$: Observable<DrawVO[]> = of<DrawVO[]>([]);;
-  creationForm: UntypedFormGroup;
+  creationForm: FormGroup<DrawCreationForm>;
   contracts: Contract[] | undefined;
   oldContractValue: number = -1;
   playerRoleArray: string[];
@@ -39,10 +40,10 @@ export class Event {
     this.results = [];
     this.roles = [];
     this.creationForm = this._fb.group({
-      contract: ['', [Validators.required], [], { updateOn: "blur" }],
-      result: ['', [Validators.required], [], { updateOn: "blur" }],
-      dealer: ['', [], [], { updateOn: "blur" }]
-    });
+      contract: ['', [Validators.required], [], { updateOn: "blur", nonNullable: true }],
+      result: ['', [Validators.required], [], { updateOn: "blur", nonNullable: true }],
+      dealer: ['', [], [], { updateOn: "blur", nonNullable: true }]
+    }) as FormGroup<DrawCreationForm>;
   }
 
   ngOnInit(): void {
@@ -86,7 +87,7 @@ export class Event {
           d.contract = ctr;
         }
       });
-      let resultId = this.result?.value;
+      let resultId = +this.result!.value;
       this.results?.forEach(res => {
         if (resultId == res.id) {
           d.result = res;
@@ -122,22 +123,28 @@ export class Event {
     // first remove old controls (if needed)
     if (this.oldContractValue != -1) {
       this.event?.players?.forEach(p => {
-        this.creationForm.removeControl(p.name);
+        //const form = this.creationForm as unknown as FormGroup<{ [key: string]: FormControl<string> }>;
+        const form = this.creationForm as unknown as FormGroup<{ [key: string]: AbstractControl<any, any, any> }>;
+
+        if (form.contains(p.name)) {
+          form.removeControl(p.name);
+      }
       });
     }
     this.playerRoleArray = [];
     this.results = [];
     this.roles = [];
     // Second add new controls
-    let contractId: number = this.contract?.value;
+    let contractId: number = +this.contract!.value;
     this._dataService.findResultsByContractId(contractId).subscribe(
       (data: ResultVO[]) => {
+        const form = this.creationForm as unknown as FormGroup<{ [key: string]: AbstractControl<any, any, any> }>;
         this.results = data;
         this.contracts?.forEach(ctr => {
           if (contractId == ctr.id) {
             this.roles = ctr.roles;
             this.event?.players?.forEach(p => {
-              this.creationForm.addControl(p.name, new UntypedFormControl(this.roles[0].name));
+              form.addControl(p.name, new FormControl<string>(this.roles[0].name));
               this.playerRoleArray.push(p.name);
             });
           }

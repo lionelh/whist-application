@@ -25,14 +25,8 @@ export class Home {
 
   constructor() {
     this.creationForm = this._fb.group<EventCreationFrom>({
-      place: this._fb.control('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.minLength(2), Validators.maxLength(150)],
-        updateOn: 'blur'
-      }),
-      players: this._fb.array<FormControl<number>>([], {
-        validators: [Validators.required]
-      })
+      place: this._fb.control('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2), Validators.maxLength(150)], updateOn: 'blur' }),
+      players: this._fb.array<FormControl<number>>([], { validators: [Validators.required] })
     });
   }
 
@@ -59,7 +53,7 @@ export class Home {
       players: this.players.controls
         .map(ctrl => this.dbPlayers.find(p => p.id === ctrl.value))
         .filter((p): p is Player => p !== undefined)
-    };
+      };
 
       this._dataService.createEvent(e).subscribe(() => {
         this.events$ = this._dataService.findAllEvents();
@@ -67,7 +61,6 @@ export class Home {
         this.players.clear();
         this.cdr.detectChanges();
       });
-
 
     }
   }
