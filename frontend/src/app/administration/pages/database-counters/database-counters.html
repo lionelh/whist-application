@@ -1,0 +1,73 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Statistiques du contenu de la base dedonnées</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card text-white border-primary">
+                <div class="card-header bg-primary">Enregistrements par table</div>
+                <div class="card-body">
+                    <div class="card-text">
+                      @if (counters$ | async) {
+                        @let c = counters$ | async;
+                        <table class="table table-bordered table-stripped">
+                            <tr class="bg-primary text-white">
+                                <th>Nom de la table</th>
+                                <th>Nombre d'enregistrement(s)</th>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Contrats</td>
+                              <td class="text-black">{{ c?.contracts }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Contracts-Rôles</td>
+                              <td class="text-black">{{ c?.contractRoles }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Donnes</td>
+                              <td class="text-black">{{ c?.draws }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Parties</td>
+                              <td class="text-black">{{ c?.events }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Joueurs</td>
+                              <td class="text-black">{{ c?.players }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Joueurs-Donnes</td>
+                              <td class="text-black">{{ c?.playerDraws }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Résultats</td>
+                              <td class="text-black">{{ c?.results }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Résultats-Rôles</td>
+                              <td class="text-black">{{ c?.resultRoles }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Rôles</td>
+                              <td class="text-black">{{ c?.roles }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black">Joueur-Parties</td>
+                              <td class="text-black">{{ c?.eventPlayers }}</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black" [attr.colspan]="2">&nbsp;</td>
+                            </tr>
+                            <tr>
+                              <td class="text-black bold">Total</td>
+                              <td class="text-black bold">{{ c?. totalRecords }}</td>
+                            </tr>
+                        </table>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>

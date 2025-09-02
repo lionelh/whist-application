@@ -1,0 +1,1 @@
+alter table tbl_player_draws add column pld_dealer bigint not null;

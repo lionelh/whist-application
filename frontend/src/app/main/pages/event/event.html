@@ -1,0 +1,139 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h1 class="text-black">
+        @if (event) {
+          Partie du {{ event.eventDate | date: 'dd MMMM yyyy' }}
+          @if (event.status == 'NEW') {
+            <span class="badge rounded-pill bg-danger">Nouvelle</span>
+          }
+          @else if (event.status == 'IN_PROGRESS') {
+            <span class="badge rounded-pill bg-warning">En cours</span>
+          }
+          @else if (event.status == 'FINISHED') {
+            <span class="badge rounded-pill bg-success">Terminée</span>
+          }
+        }
+      </h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card border-primary">
+        <div class="card-header bg-primary text-white">
+          Scores de la partie
+          @if (event?.status == 'IN_PROGRESS') {
+            <button class="btn btn-danger" title="Clôturer la partie" (click)="closeEvent(event?.id)">
+              <i class="bi-door-closed"></i>
+            </button>
+          }
+        </div>
+        <div class="card-body">
+          <div class="card-text">
+            <table class="table table-bordered border-primary">
+              <tr class="bg-primary text-white">
+                <th>Annonce</th>
+                <th>Résultat</th>
+                @for (p of event?.players; track $index) {
+                  <th>{{ p.name }}</th>
+                }
+              </tr>
+              @if ((draws$ | async)?.length == 0) {
+                <tr>
+                  <td [attr.colspan]="computeColspan(event?.players?.length)">Aucune donne n'a été jouée !</td>
+                </tr>
+              }
+              @for (d of (draws$ | async); track $index;) {
+                <tr>
+                  <td>{{ d.contract?.name }}</td>
+                  <td>{{ d.result?.name }}</td>
+                  @for (pd of d.players; track $index) {
+                    <td nowrap>
+                      <span class="td-span-align" [class.text-danger]="pd.eventScore < 0" [class.text-success]="pd.eventScore > 0" [class.text-warning]="pd.eventScore == 0">
+                        @if (pd.eventScore > 0) { <span>+{{ pd?.eventScore }}</span> }
+                        @else if (pd.eventScore <= 0) { <span>{{ pd?.eventScore }}</span> }
+                      </span>
+                      &nbsp;
+                      @if (pd.roleName != 'Mort' && pd.drawScore > 0) {
+                        <span class="td-span-align" [class.role-annonceur]="pd.roleName.toLowerCase().startsWith('annonceur')">(+{{ pd.drawScore }})</span>
+                      }
+                      @if (pd.roleName != 'Mort' && pd.drawScore <= 0) {
+                        <span class="td-span-align" [class.role-annonceur]="pd.roleName.toLowerCase().startsWith('annonceur')">({{ pd.drawScore }})</span>
+                      }
+                      @if (pd.roleName == 'Mort') {
+                        <span class="td-span-align">(-)</span>
+                      }
+                      &nbsp;
+                      @if (pd.dealer) {
+                        <span class="td-span-align bold">***</span>
+                      }
+                    </td>
+                  }
+                </tr>
+              }
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    @if (event?.status != 'FINISHED') {
+      <div class="col">
+        <div class="card border-primary">
+          <div class="card-header bg-primary text-white">Création d'une donne</div>
+          <div class="card-body">
+            <div class="card-text">
+              <form [formGroup]="creationForm" (ngSubmit)="onSubmit()">
+                @if (event?.players?.length == 4) {
+                  <div class="for-group" [class.has-danger]="dealer?.invalid && (dealer?.dirty || dealer?.touched)">
+                  <label for="dealer" class="control-label">Nom du donneur</label>
+                  <select class="form-select"id="dealer" formControlName="dealer" [class.is-invalid]="dealer?.invalid && (dealer?.dirty || dealer?.touched)" [class.is-valid]="dealer?.valid && (dealer?.dirty || dealer?.touched)">
+                    @for (p of event?.players; track $index) {
+                      <option [value]="p.name">{{ p.name }}</option>
+                    }
+                  </select>
+                </div>
+                }
+                <div class="form-group required" [class.has-danger]="contract?.invalid && (contract?.dirty || contract?.touched)">
+                  <label for="contract" class="control-label">Nom de l'annonce de la donne</label>
+                  <select class="form-select" id="contract" formControlName="contract" [class.is-invalid]="contract?.invalid && (contract?.dirty || contract?.touched)" [class.is-valid]="contract?.valid && (contract?.dirty || contract?.touched)" (change)="onContractChange()">
+                    @for (c of contracts; track $index) {
+                      <option [value]="c.id">{{ c.name }}</option>
+                    }
+                  </select>
+                </div>
+                @if (oldContractValue != -1) {
+                  <div class="bordered-fields">
+                    <div class="title-fields">Rôles des joueurs particiants à la donne:</div>
+                    @for (p of playerRoleArray; track $index) {
+                      <div class="form-group required" [class.has-danger]="this.creationForm.get(p)?.invalid && (this.creationForm.get(p)?.dirty || this.creationForm.get(p)?.touched)">
+                        <label for="{{ p }}" class="control-label">{{ p }}</label>
+                        <select class="form-select" id="{{ p }}" [class.is-invalid]="this.creationForm.get(p)?.invalid && (this.creationForm.get(p)?.dirty || this.creationForm.get(p)?.touched)" [class.is-valid]="this.creationForm.get(p)?.valid && (this.creationForm.get(p)?.dirty || this.creationForm.get(p)?.touched)" formControlName="{{ p }}">
+                          @for (r of roles; track $index) {
+                            <option [value]="r.name">{{ r.name }}</option>
+                          }
+                        </select>
+                      </div>
+                    }
+                  </div>
+                  <div class="form-group required" [class.has-danger]="result?.invalid && (result?.dirty || result?.touched)">
+                    <label for="result" class="control-label">Résultat de la donne</label>
+                    <select class="form-select" id="result" formControlName="result" [class.is-invalid]="result?.invalid && (result?.dirty || result?.touched)" [class.is-valid]="result?.valid && (result?.dirty || result?.touched)">
+                      @for (r of results; track $index) {
+                        <option [value]="r.id">{{ r.name }}</option>
+                      }
+                    </select>
+                  </div>
+                }
+                <div class="form-group">
+                  <fieldset>
+                    <button class="btn btn-primary" type="submit" [disabled]="!creationForm.valid">Enregistrer</button>
+                  </fieldset>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

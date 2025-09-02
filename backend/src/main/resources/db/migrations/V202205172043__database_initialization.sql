@@ -1,0 +1,33 @@
+create sequence seq_contract start with 1 increment by 1;
+create sequence seq_draw start with 1 increment by 1;
+create sequence seq_event start with 1 increment by 1;
+create sequence seq_player start with 1 increment by 1;
+create sequence seq_result start with 1 increment by 1;
+create sequence seq_role start with 1 increment by 1;
+
+create table tbl_contract_roles (cro_ctr_id bigint not null, cro_rol_id bigint not null);
+create table tbl_contracts (ctr_id bigint not null, ctr_creation_date timestamp not null, ctr_last_update_date timestamp not null, ctr_name varchar(150) not null, ctr_number_players smallint not null, primary key (ctr_id));
+create table tbl_draws (drw_id bigint not null, drw_creation_date timestamp not null, drw_last_update_date timestamp not null, drw_ctr_id bigint not null, drw_evt_id bigint not null, drw_res_id bigint not null, primary key (drw_id));
+create table tbl_event_players (evp_evt_id bigint not null, evp_pl__id bigint not null);
+create table tbl_events (evt_id bigint not null, evt_creation_date timestamp not null, evt_date date not null, evt_last_update_date timestamp not null, evt_place varchar(150) not null, evt_status varchar(50) not null, primary key (evt_id));
+create table tbl_player_draws (pld_drw_id bigint not null, pld_pl_id bigint not null, pld_creation_date timestamp not null, pld_draw_score smallint not null, pld_event_score smallint not null, pld_last_update_date timestamp not null, pld_rol_id bigint not null, primary key (pld_drw_id, pld_pl_id));
+create table tbl_players (pl_id bigint not null, pl_creation_date timestamp not null, pl_last_update_date timestamp not null, pl_name varchar(150) not null, primary key (pl_id));
+create table tbl_result_roles (rer_res_id bigint not null, rer_rol_id bigint not null, rer_creation_date timestamp not null, rer_last_update_date timestamp not null, rer_score smallint not null, primary key (rer_res_id, rer_rol_id));
+create table tbl_results (res_id bigint not null, res_creation_date timestamp not null, res_last_update_date timestamp not null, res_name varchar(150) not null, res_number_players smallint not null, res_ctr_id bigint not null, primary key (res_id));
+create table tbl_roles (rol_id bigint not null, rol_creation_date timestamp not null, rol_last_update_date timestamp not null, rol_name varchar(150) not null, primary key (rol_id));
+
+alter table tbl_players add constraint UK_e1klsphovdlen9rhidybo72px unique (pl_name);
+alter table tbl_roles add constraint UK_frj5yxfmpmckg76le5qh8yapr unique (rol_name);
+alter table tbl_contract_roles add constraint FKh8sx8q8gjffi2csf1uha8w2uo foreign key (cro_rol_id) references tbl_roles;
+alter table tbl_contract_roles add constraint FKs3x5s4cgkqhnpvlojqu0um1ui foreign key (cro_ctr_id) references tbl_contracts;
+alter table tbl_draws add constraint FKnpk6watwxcqf2gjefn3mm7dde foreign key (drw_ctr_id) references tbl_contracts;
+alter table tbl_draws add constraint FK7boktmqanjqv4jbosfedigt8h foreign key (drw_evt_id) references tbl_events;
+alter table tbl_draws add constraint FKr9f49mysl201f8e95x4bgvftc foreign key (drw_res_id) references tbl_results;
+alter table tbl_event_players add constraint FKnmn23a0bnjftr2sh3dlp0lc2w foreign key (evp_pl__id) references tbl_players;
+alter table tbl_event_players add constraint FKi51ywydbeqonx98ekor6amma foreign key (evp_evt_id) references tbl_events;
+alter table tbl_player_draws add constraint FKcfytux9ol0cag3sh8x3juabxl foreign key (pld_drw_id) references tbl_draws;
+alter table tbl_player_draws add constraint FK3imk6u2lc8ubdc5de12qa77wy foreign key (pld_pl_id) references tbl_players;
+alter table tbl_player_draws add constraint FKeeqr875lhm7dsg4r2grn6knxy foreign key (pld_rol_id) references tbl_roles;
+alter table tbl_result_roles add constraint FKkmrq3ur8p7pc0i76ja9k8hgx1 foreign key (rer_res_id) references tbl_results;
+alter table tbl_result_roles add constraint FKnae6mwwu9ph9fjd57yk0b596h foreign key (rer_rol_id) references tbl_roles;
+alter table tbl_results add constraint FK7xjc8v2hhc0qapuqfhdmf46q foreign key (res_ctr_id) references tbl_contracts;

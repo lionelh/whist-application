@@ -1,0 +1,20 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" [routerLink]="['/home']" routerLinkActive="active">Whist: Gestionnaire de parties</a>
+      <div class="collapse navbar-collapse" id="navbarColor01">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item dropdown" routerLinkActive="active">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Administration</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" [routerLink]="['/players']" routerLinkActive="active">Gestion des joueurs</a>
+              <a class="dropdown-item" [routerLink]="['/roles']" routerLinkActive="active">Gestion des rôles</a>
+              <a class="dropdown-item" [routerLink]="['/contracts']" routerLinkActive="active">Gestion des annonces</a>
+              <a class="dropdown-item" [routerLink]="['/results']" routerLinkActive="active">Gestion des score des annonces</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" [routerLink]="['/administration/database-counters']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Maintenance de la base de données</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>

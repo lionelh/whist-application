@@ -1,0 +1,120 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Bienvenue !</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card text-white border-primary">
+                <div class="card-header bg-primary">Historique des parties</div>
+                <div class="card-body">
+                    <div class="card-text">
+                        <table class="table table-bordered">
+                            <tr class="bg-primary text-white">
+                                <th>Date de la partie</th>
+                                <th>Lieu de la partie</th>
+                                <th>Status de la partie</th>
+                                <th>Joeurs participants</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                            @if ((events$ | async)?.length == 0) {
+                              <tr>
+                                <td [attr.colspan]="5">Aucune partie trouvée !</td>
+                            </tr>
+                            }
+
+                            @for (e of events$ | async; track $index) {
+                              <tr>
+                                <td class="text-black">{{ e.eventDate | date: 'dd MMMM yyyy' }}</td>
+                                <td class="text-black">{{ e.place }}</td>
+                                <td>
+                                  @if (e.status == 'NEW') { <span class="badge rounded-pill bg-danger">Nouvelle</span> }
+                                  @if (e.status == 'IN_PROGRESS') { <span class="badge rounded-pill bg-warning">En cours</span> }
+                                  @if (e.status == 'FINISHED') { <span class="badge rounded-pill bg-success">Terminée</span> }
+                                </td>
+                                <td>
+                                    <ul class="list-group">
+                                      @for (p of e.players; track $index) {
+                                        <li class="list-group-item" [class.bg-warning]="$index % 2 == 0" >{{ p.name }}</li>
+                                      }
+                                    </ul>
+                                </td>
+                                <td>
+                                    <a [routerLink]="['/event', e.id]" title="Voir les détails de la partie" class="btn btn-success bg-success">
+                                        <i class="bi-search"></i>
+                                    </a>
+                                    &nbsp;
+                                    @if (e?.status == 'IN_PROGRESS') {
+                                      <a (click)="closeEvent(e?.id)" title="Clôturer la partie" class="btn btn-danger bg-danger">
+                                        <i class="bi-door-closed"></i>
+                                    </a>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-white border-primary">
+                <div class="card-header bg-primary">Création d'une partie</div>
+                <div class="card-body text-black">
+                    <div class="card-text">
+                        <form [formGroup]="creationForm" (ngSubmit)="onSubmit()">
+                          <div class="form-group required" [class.has-danger]="place.invalid && (place.dirty || place.touched)">
+                            <label for="place" class="control-label">Lieu de la partie</label>
+                            <input
+                              id="place"
+                              type="text"
+                              formControlName="place"
+                              class="form-control"
+                              [class.is-invalid]="place.invalid && (place.dirty || place.touched)"
+                              [class.is-valid]="place.valid && (place.dirty || place.touched)"
+                            />
+                            @if (place.invalid && (place.dirty || place.touched)) {
+                              <div class="invalid-feedback">
+                                @if (place.errors?.['required']) {
+                                  <div>Le lieu est obligatoire.</div>
+                                }
+                                @if (place.errors?.['minlength']) {
+                                  <div>Le lieu doit contenir au moins 2 caractères.</div>
+                                }
+                                @if (place.errors?.['maxlength']) {
+                                  <div>Le lieu doit comporter maximum 150 caractères.</div>
+                                }
+                              </div>
+                            }
+                          </div>
+                          <div class="form-group required">
+                            <label class="control-label">Joueurs participants à la partie</label>
+                            @for (p of dbPlayers; track $index) {
+                              <div class="form-check">
+                                <input
+                                  type="checkbox"
+                                  class="form-check-input"
+                                  [checked]="isPlayerSelected(p.id!)"
+                                  (change)="onPlayerCheckboxChange($event, p.id!)"
+                                  [id]="'player-' + p.id"
+                                />
+                                <label class="form-check-label" [for]="'player-' + p.id">{{ p.name }}</label>
+                              </div>
+                            }
+                          </div>
+                          @if (players.errors?.['required']) {
+                            <div class="invalid-feedback">
+                              La sélection des joueurs participants est obligatoire.
+                            </div>
+                          }
+                          <div class="form-group">
+                            <button class="btn btn-primary" type="submit" [disabled]="!creationForm.valid">Enregistrer</button>
+                          </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
