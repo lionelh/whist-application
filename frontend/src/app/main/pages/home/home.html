@@ -25,15 +25,15 @@
                             }
 
                             @for (e of events$ | async; track $index) {
-                              <tr>
-                                <td class="text-black">{{ e.eventDate | date: 'dd MMMM yyyy' }}</td>
-                                <td class="text-black">{{ e.place }}</td>
+                              <tr [class.bg-info]="$index % 2 == 0">
+                                <td [class.text-black]="$index % 2 != 0">{{ e.eventDate | date: 'dd MMMM yyyy' }}</td>
+                                <td [class.text-black]="$index % 2 != 0">{{ e.place }}</td>
                                 <td>
                                   @if (e.status == 'NEW') { <span class="badge rounded-pill bg-danger">Nouvelle</span> }
                                   @if (e.status == 'IN_PROGRESS') { <span class="badge rounded-pill bg-warning">En cours</span> }
                                   @if (e.status == 'FINISHED') { <span class="badge rounded-pill bg-success">Terminée</span> }
                                 </td>
-                                <td>
+                                <td [class.blue-cell]="$index % 2 == 0">
                                     <ul class="list-group">
                                       @for (p of e.players; track $index) {
                                         <li class="list-group-item" [class.bg-warning]="$index % 2 == 0" >{{ p.name }}</li>
