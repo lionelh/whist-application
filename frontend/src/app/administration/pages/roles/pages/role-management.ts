@@ -4,12 +4,12 @@ import { Observable } from 'rxjs';
 import { Data } from '../../../../main/services/data';
 import { UniqueRoleNameValidator } from '../validators/unique-role-name';
 import { Role } from '../../../../main/data/role';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { RoleCreationForm } from '../forms/role-creation';
 
 @Component({
   selector: 'wsw-role-management',
-  imports: [ ReactiveFormsModule, CommonModule ],
+  imports: [ ReactiveFormsModule, AsyncPipe ],
   templateUrl: './role-management.html',
   styleUrls: ['./role-management.css']
 })

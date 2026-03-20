@@ -45,15 +45,25 @@
                                        [class.is-valid]="name?.valid && (name?.dirty || name?.touched)"
                                 />
                                 <div class="form-helper"></div>
-                                <div class="text-warning" *ngIf="(name?.dirty || name?.touched) && name?.status === 'PENDING'">
-                                    Validation en cours...
-                                </div>
-                                <div *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="invalid-feedback">
-                                    <div *ngIf="name?.errors?.['required']">Le nom est obligatoire.</div>
-                                    <div *ngIf="name?.errors?.['minlength']">Le nom doit contenir au moins 2 caractères.</div>
-                                    <div *ngIf="name?.errors?.['maxlength']">Le nom doit comporter maximum 150 caractères.</div>
-                                    <div *ngIf="name?.errors?.['uniquePlayerName']">Le nom du joueur existe déjà.</div>
-                                </div>
+                                @if ((name?.dirty || name?.touched) && name?.status === 'PENDING') {
+                                  <div class="text-warning">Validation en cours...</div>
+                                }
+                                @if (name?.invalid && (name?.dirty || name?.touched)) {
+                                  <div class="invalid-feedback">
+                                    @if (name?.errors?.['required']) {
+                                      <div>Le nom est obligatoire.</div>
+                                    }
+                                    @if (name?.errors?.['minlength']) {
+                                      <div>Le nom doit contenir au moins 2 caractères.</div>
+                                    }
+                                    @if (name?.errors?.['maxlength']) {
+                                      <div>Le nom doit comporter maximum 150 caractères.</div>
+                                    }
+                                    @if (name?.errors?.['uniquePlayerName']) {
+                                      <div>Le nom du joueur existe déjà.</div>
+                                    }
+                                  </div>
+                                }
                             </div>
                             <div class="form-group">
                                 <fieldset>

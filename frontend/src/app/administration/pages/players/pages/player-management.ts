@@ -4,12 +4,12 @@ import { Observable } from 'rxjs';
 import { Data } from '../../../../main/services/data';
 import { UniquePlayerNameValidator } from '../validators/unique-player-name';
 import { Player } from '../../../../main/data/player';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { PlayerCreationForm } from '../forms/player-creation';
 
 @Component({
   selector: 'wsw-player-management',
-  imports: [ ReactiveFormsModule, CommonModule ],
+  imports: [ ReactiveFormsModule, AsyncPipe ],
   templateUrl: './player-management.html',
   styleUrls: ['./player-management.css']
 })

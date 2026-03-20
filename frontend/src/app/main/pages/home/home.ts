@@ -4,13 +4,13 @@ import { Game } from '../../data/game';
 import { Data } from '../../services/data';
 import { Player } from '../../data/player';
 import { Validators, FormBuilder, ReactiveFormsModule, FormGroup, FormControl, FormArray } from '@angular/forms';
-import { CommonModule, DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { EventCreationFrom } from './forms/Event-creation';
 
 @Component({
   selector: 'wsw-home',
-  imports: [DatePipe, RouterLink, ReactiveFormsModule, CommonModule],
+  imports: [DatePipe, RouterLink, ReactiveFormsModule, AsyncPipe],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

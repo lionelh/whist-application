@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import {ChangeDetectorRef, Component, inject, OnDestroy, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Data } from '../../services/data';
 import { Game } from '../../data/game';
 import { Contract } from '../../data/contract';
 import { DrawVO } from '../../data/drawVO';
-import { CommonModule, DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ResultVO } from '../../data/resultVO';
 import { Role } from '../../data/role';
@@ -15,11 +15,11 @@ import { DrawCreationForm } from './forms/draw-cretation';
 @Component({
   selector: 'wsw-event',
   standalone: true,
-  imports: [DatePipe, CommonModule, ReactiveFormsModule],
+  imports: [DatePipe, AsyncPipe, ReactiveFormsModule],
   templateUrl: './event.html',
   styleUrls: ['./event.css']
 })
-export class Event {
+export class Event implements OnInit, OnDestroy {
   private _dataService = inject(Data);
   private route = inject(ActivatedRoute);
   private _fb = inject(FormBuilder);
@@ -27,7 +27,7 @@ export class Event {
   private sub: any;
   id?: number;
   event: Game | undefined;
-  draws$: Observable<DrawVO[]> = of<DrawVO[]>([]);;
+  draws$: Observable<DrawVO[]> = of<DrawVO[]>([]);
   creationForm: FormGroup<DrawCreationForm>;
   contracts: Contract[] | undefined;
   oldContractValue: number = -1;
@@ -71,6 +71,7 @@ export class Event {
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
+
   computeColspan(inLength: number | undefined): number {
     if (inLength !== undefined) {
       return (2 + inLength);
@@ -96,11 +97,7 @@ export class Event {
       d.players = [];
       this.event?.players?.forEach(p => {
         const pdVO: PlayerDrawVO = { playerName: p.name, roleName: this.creationForm.get(p.name)?.value, eventScore: 0, drawScore: 0 };
-        if (pdVO.roleName === 'Mort' || (this.event?.players?.length == 4 && p.name == this.dealer?.value)) {
-          pdVO.dealer = true;
-        } else {
-          pdVO.dealer = false;
-        }
+        pdVO.dealer = pdVO.roleName === 'Mort' || (this.event?.players?.length == 4 && p.name == this.dealer?.value);
         d.players?.push(pdVO);
       });
       this._dataService.createDraw(this.event?.id, d).subscribe(

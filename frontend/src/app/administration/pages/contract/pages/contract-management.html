@@ -16,18 +16,24 @@
                                 <th>Nombre de jouer de la donne</th>
                                 <th>Rôles des participants à la donne</th>
                             </tr>
-                            <tr *ngIf="(contracts$ | async)?.length == 0">
+                            @if ((contracts$ | async)?.length == 0) {
+                              <tr>
                                 <td [attr.colspan]="4">Aucune annonces trouvé dans la base données !</td>
-                            </tr>
-                            <tr *ngFor="let c of contracts$ | async; index as i" [class.bg-info]="i % 2 == 0" [class.text-black]="i % 2 != 0">
+                              </tr>
+                            }
+                            @for (c of contracts$ | async; track $index; let i = $index) {
+                              <tr [class.bg-info]="i % 2 == 0" [class.text-black]="i % 2 != 0">
                                 <td>{{ c.name }}</td>
                                 <td>{{ c.numberOfPlayers }}</td>
                                 <td [class.blue-cell]="i % 2 == 0">
                                     <ul class="list-group">
-                                        <li class="list-group-item" [class.bg-warning]="j % 2 == 0" *ngFor="let r of c.roles; index as j">{{ r.name }}</li>
+                                      @for (r of c.roles; track $index; let j = $index) {
+                                        <li class="list-group-item" [class.bg-warning]="j % 2 == 0">{{ r.name }}</li>
+                                      }
                                     </ul>
                                 </td>
-                            </tr>
+                              </tr>
+                            }
                         </table>
                     </div>
                 </div>
@@ -49,15 +55,25 @@
                                        [class.is-valid]="name?.valid && (name?.dirty || name?.touched)"
                                 />
                                 <div class="form-helper"></div>
-                                <div class="text-warning" *ngIf="(name?.dirty || name?.touched) && name?.status === 'PENDING'">
-                                    Validation en cours...
-                                </div>
-                                <div *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="invalid-feedback">
-                                    <div *ngIf="name?.errors?.['required']">Le nom est obligatoire.</div>
-                                    <div *ngIf="name?.errors?.['minlength']">Le nom doit contenir au moins 2 caractères.</div>
-                                    <div *ngIf="name?.errors?.['maxlength']">Le nom doit comporter maximum 150 caractères.</div>
-                                    <div *ngIf="name?.errors?.['uniquePlayerName']">Le nom du rôle existe déjà.</div>
-                                </div>
+                                @if ((name?.dirty || name?.touched) && name?.status === 'PENDING') {
+                                  <div class="text-warning">Validation en cours...</div>
+                                }
+                                @if (name?.invalid && (name?.dirty || name?.touched)) {
+                                  <div class="invalid-feedback">
+                                    @if (name?.errors?.['required']) {
+                                      <div>Le nom est obligatoire.</div>
+                                    }
+                                    @if (name?.errors?.['minlength']) {
+                                      <div>Le nom doit contenir au moins 2 caractères.</div>
+                                    }
+                                    @if (name?.errors?.['maxlength']) {
+                                      <div>Le nom doit comporter maximum 150 caractères.</div>
+                                    }
+                                    @if (name?.errors?.['uniquePlayerName']) {
+                                      <div>Le nom du rôle existe déjà.</div>
+                                    }
+                                  </div>
+                                }
                             </div>
                             <fieldset class="form-group">
                                 <label for="numberOfPlayers" class="control-label">Nombre de joueurs participants à la partie<font color='red'>*</font></label>
@@ -72,14 +88,16 @@
                             </fieldset>
                             <fieldset class="form-group">
                                 <label for="roles" class="control-label">Rôles des joueurs participants à la partie</label>
-                                <div class="form-check" *ngFor="let r of rolesArray">
+                                @for (r of rolesArray; track $index) {
+                                  <div class="form-check">
                                     <input type="checkbox" [id]="'role-' + r.id" class="form-check-input" [value]="r.id" [checked]="isRoleSelected(r.id!)" (change)="onRoleCheckboxChange($event)">
                                     <label [for]="'role-' + r.id" class="form-check-label">{{ r.name }}</label>
-                                </div>
+                                  </div>
+                                }
                             </fieldset>
-                            <div *ngIf="this.creationForm.controls['roles'].errors?.['required']" class="invalid-feedback">
-                                La sélection des rôles est obligatoire.
-                            </div>
+                            @if (this.creationForm.controls['roles'].errors?.['required']) {
+                              <div class="invalid-feedback">La sélection des rôles est obligatoire.</div>
+                            }
                             <div class="form-group">
                                 <fieldset>
                                     <button class="btn btn-primary" type="submit" [disabled]="!creationForm.valid">Enregistrer</button>

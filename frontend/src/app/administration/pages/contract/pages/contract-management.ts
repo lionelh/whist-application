@@ -5,11 +5,11 @@ import { Contract } from '../../../../main/data/contract';
 import { Role } from '../../../../main/data/role';
 import { UniqueContractByNameAndNumberOfPlayersValidator } from '../validators/unique-contract-name-and-number-of-players.validator';
 import { Data } from '../../../../main/services/data';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'wsw-contract-management',
-  imports: [ ReactiveFormsModule, CommonModule ],
+  imports: [ ReactiveFormsModule, AsyncPipe ],
   templateUrl: './contract-management.html',
   styleUrls: ['./contract-management.css']
 })

@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DatabaseCounter } from '../../../main/data/database-counter';
 import { Data } from '../../../main/services/data';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'wsw-database-counters',
-  imports: [CommonModule],
+  imports: [ AsyncPipe ],
   templateUrl: './database-counters.html',
   styleUrl: './database-counters.css'
 })
