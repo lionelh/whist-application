@@ -1,0 +1,107 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h1>Gestion des scores par contrats</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card text-white border-primary">
+        <div class="card-header bg-primary">Liste des résultats par contrat</div>
+        <div class="card-body">
+          <div class="card-text">
+            <table class="table table-bordered table-striped">
+              <tr class="bg-primary text-white">
+                <th>Nom du l'annonce</th>
+                <th>Nom du résultat de la donne</th>
+                <th>Rôles & scores des participants à la donne</th>
+              </tr>
+                @for (r of results$ | async; track r.name; let i = $index) {
+                  <tr [class.bg-info]="i % 2 == 0" [class.text-black]="i % 2 != 0">
+                    <td>{{ r.contract?.name }} ({{ r.contract?.numberOfPlayers }} joueurs)</td>
+                    <td>{{ r.name }}</td>
+                    <td [class.blue-cell]="i % 2 == 0">
+                      <table class="table table-bordered mb-0">
+                        <thead>
+                        <tr>
+                          @for (rs of r.roleScores; track rs.roleName) {
+                            <th nowrap class="bg-warning text-black">{{ rs.roleName }}</th>
+                          }
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr [class.bg-light]="i % 2 == 0">
+                          @for (rs of r.roleScores; track rs.roleName) {
+                            <td class="text-black">
+                              {{ rs.score >= 0 ? '+' : '' }}{{ rs.score }}
+                            </td>
+                          }
+                        </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="3" class="text-black">Aucun résultat trouvé dans la base données !</td>
+                  </tr>
+                }
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card border-primary">
+        <div class="card-header bg-primary text-white">Création d'un résultat pour un contrat</div>
+        <div class="card-body text-black">
+          <div class="card-text">
+            <form [formGroup]="creationForm" (ngSubmit)="onSubmit()">
+              <div class="form-group mb-3">
+                <label for="name" class="control-label">Nom du résultat de la donne</label>
+                <input id="name" type="text" formControlName="name" class="form-control"
+                       [class.is-invalid]="name.invalid && (name.dirty || name.touched)"
+                       [class.is-valid]="name.valid && (name.dirty || name.touched)" />
+
+                @if (name.invalid && (name.dirty || name.touched)) {
+                  <div class="invalid-feedback">
+                    @if (name.errors?.['required']) { <div>Le nom est obligatoire.</div> }
+                    @if (name.errors?.['minlength']) { <div>Minimum 2 caractères.</div> }
+                  </div>
+                }
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="contract" class="control-label">Nom de l'annonce de la donne</label>
+                <select class="form-select" id="contract" formControlName="contract"
+                        (change)="onContractChange()"
+                        [class.is-invalid]="contract.invalid && (contract.dirty || contract.touched)">
+                  <option [ngValue]="null" disabled>-- Choisir un contrat --</option>
+                  @for (c of contracts; track c.id) {
+                    <option [value]="c.id">{{ c.name }} ({{ c.numberOfPlayers }} joueurs)</option>
+                  }
+                </select>
+              </div>
+
+              <div class="row">
+                @for (role of roleScoresArray; track role) {
+                  <div class="col-6 mb-2">
+                    <label [for]="role" class="control-label">{{ role }}</label>
+                    <input [id]="role" type="number" [formControlName]="role" class="form-control" />
+                  </div>
+                }
+              </div>
+
+              <div class="mt-4">
+                <button class="btn btn-primary w-100" type="submit" [disabled]="creationForm.invalid">
+                  Enregistrer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

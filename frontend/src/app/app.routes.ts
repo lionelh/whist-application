@@ -9,12 +9,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./main/pages/event/event').then(m => m.Event)
   },
-/*
-  { path: 'players', loadChildren: () => import('./player/player.module').then(m => m.PlayerModule) },
-  { path: 'roles', loadChildren: () => import('./role/role.module').then(m => m.RoleModule) },
-  { path: 'contracts', loadChildren: () => import('./contract/contract.module').then(m => m.ContractModule) },
-  { path: 'results', loadChildren: () => import('./result/result.module').then(m => m.ResultModule) },
-*/
   {
     path: 'administration',
     loadChildren: () =>
