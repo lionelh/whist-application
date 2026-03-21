@@ -20,7 +20,7 @@ public class WhistScoreApplication {
 
     @Bean
     public OncePerRequestFilter angularForwardFilter() {
-        System.out.println("In filter");
+        IO.println("In filter");
         return new OncePerRequestFilter() {
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
