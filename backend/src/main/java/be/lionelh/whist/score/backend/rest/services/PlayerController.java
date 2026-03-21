@@ -21,35 +21,35 @@ public class PlayerController {
         this.dataService = inDataService;
     }
 
-    @RequestMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.GET })
+    @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<List<Player>> findAllSorted() {
         List<Player> l = this.dataService.findAllPlayersSorted();
 
-        return new ResponseEntity<>(l, HttpStatus.OK);
+        return ResponseEntity.ok(l);
     }
 
-    @RequestMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-            MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.POST })
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+            MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<Player> create(@RequestBody Player inPlayer) {
         return new ResponseEntity<>(this.dataService.createOrUpdatePlayer(inPlayer), HttpStatus.CREATED);
     }
 
-    @RequestMapping(path = "/{id}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-            MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.PUT })
+    @PutMapping(path = "/{id}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+            MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<Player> update(@RequestBody Player inPlayer, @PathVariable("id") long inPlayerId) {
         Player p = this.dataService.findPlayerById(inPlayerId);
         if (p == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
 
         p.setName(inPlayer.getName());
 
-        return new ResponseEntity<>(this.dataService.createOrUpdatePlayer(p), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.dataService.createOrUpdatePlayer(p));
     }
 
-    @RequestMapping(path = "/{name}/exists", method = { RequestMethod.GET })
+    @GetMapping("/{name}/exists")
     public ResponseEntity<Boolean> isNameTaken(@PathVariable("name") String inName) {
         Boolean b = this.dataService.playerNameExists(inName);
-        return new ResponseEntity<>(b, HttpStatus.OK);
+        return ResponseEntity.ok(b);
     }
 }

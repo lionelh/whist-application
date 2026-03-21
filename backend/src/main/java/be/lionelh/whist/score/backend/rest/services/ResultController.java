@@ -21,16 +21,16 @@ public class ResultController {
         this.dataService = inDataService;
     }
 
-    @RequestMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.GET })
+    @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<List<ResultVO>> findAllSorted() {
         List<ResultVO> l = this.dataService.findAllResultsSorted();
 
-        return new ResponseEntity<>(l, HttpStatus.OK);
+        return ResponseEntity.ok(l);
     }
 
-    @RequestMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-            MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.POST })
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+            MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultVO> create(@RequestBody ResultVO inResult) {
-        return new ResponseEntity<>(this.dataService.createOrUpdateResult(inResult), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.dataService.createOrUpdateResult(inResult));
     }
 }

@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -23,49 +22,47 @@ public class ContractController {
         this.dataService = inDataService;
     }
 
-    @RequestMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.GET })
+    @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<List<Contract>> findAllSorted() {
         List<Contract> l = this.dataService.findAllContractsSorted();
 
-        return new ResponseEntity<>(l, HttpStatus.OK);
+        return ResponseEntity.ok(l);
     }
 
-    @RequestMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-            MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.POST })
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+            MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<Contract> create(@RequestBody Contract inContract) {
-        return new ResponseEntity<>(this.dataService.createOrUpdateContract(inContract), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.dataService.createOrUpdateContract(inContract));
     }
 
-    @RequestMapping(path = "/{id}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-            MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.PUT })
-    public ResponseEntity<Contract> update(@RequestBody Contract inContract, @PathParam("id") long inContractId) {
+    @PutMapping(path = "/{id}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+            MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<Contract> update(@RequestBody Contract inContract, @PathVariable("id") long inContractId) {
         Contract c = this.dataService.findContractById(inContractId);
         if (c == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
 
         c.setName(inContract.getName());
         c.setRoles(inContract.getRoles());
 
-        return new ResponseEntity<>(this.dataService.createOrUpdateContract(c), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.dataService.createOrUpdateContract(c));
     }
 
-    @RequestMapping(path = "/{name}/{numberOfPlayers}/exists", method = { RequestMethod.GET })
+    @GetMapping("/{name}/{numberOfPlayers}/exists")
     public ResponseEntity<Boolean> isNameAndNumberOfPlayersTaken(@PathVariable("name") String inName,
             @PathVariable("numberOfPlayers") short inNumberOfPlayers) {
         Boolean b = this.dataService.existsContractByNameAndNumberOfPlayers(inName, inNumberOfPlayers);
-        return new ResponseEntity<>(b, HttpStatus.OK);
+        return ResponseEntity.ok(b);
     }
 
-    @RequestMapping(path = "/numberofplayers/{nop}", produces = { MediaType.APPLICATION_JSON_VALUE }, method = {
-            RequestMethod.GET })
+    @GetMapping(path = "/numberofplayers/{nop}", produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<List<Contract>> findByNumberOfPlayers(@PathVariable("nop") Short inNumberOfPlayers) {
-        return new ResponseEntity<>(this.dataService.findContractsByNumberOfPlayers(inNumberOfPlayers), HttpStatus.OK);
+        return ResponseEntity.ok(this.dataService.findContractsByNumberOfPlayers(inNumberOfPlayers));
     }
 
-    @RequestMapping(path = "/{id}/results", produces = { MediaType.APPLICATION_JSON_VALUE }, method = {
-            RequestMethod.GET })
+    @GetMapping(path = "/{id}/results", produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<List<ResultVO>> findResultsByContractId(@PathVariable("id") Long inContractId) {
-        return new ResponseEntity<>(this.dataService.findResultsByContractId(inContractId), HttpStatus.OK);
+        return ResponseEntity.ok(this.dataService.findResultsByContractId(inContractId));
     }
 }

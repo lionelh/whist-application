@@ -22,25 +22,25 @@ public class RoleController {
         this.dataService = inDataService;
     }
 
-    @RequestMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.GET })
+    @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<List<Role>> findAllSorted() {
         List<Role> l = this.dataService.findAllRolesSorted();
 
-        return new ResponseEntity<>(l, HttpStatus.OK);
+        return ResponseEntity.ok(l);
     }
 
-    @RequestMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-            MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.POST })
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+            MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<Role> create(@RequestBody Role inRole) {
-        return new ResponseEntity<>(this.dataService.createOrUpdateRole(inRole), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.dataService.createOrUpdateRole(inRole));
     }
 
-    @RequestMapping(path = "/{id}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-            MediaType.APPLICATION_JSON_VALUE }, method = { RequestMethod.PUT })
-    public ResponseEntity<Role> update(@RequestBody Role inRole, @PathParam("id") long inRoleId) {
+    @PutMapping(path = "/{id}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+            MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<Role> update(@RequestBody Role inRole, @PathVariable("id") long inRoleId) {
         Role r = this.dataService.findRoleById(inRoleId);
         if (r == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
 
         r.setName(inRole.getName());
@@ -48,9 +48,9 @@ public class RoleController {
         return new ResponseEntity<>(this.dataService.createOrUpdateRole(r), HttpStatus.CREATED);
     }
 
-    @RequestMapping(path = "/{name}/exists", method = { RequestMethod.GET })
+    @GetMapping("/{name}/exists")
     public ResponseEntity<Boolean> isNameTaken(@PathVariable("name") String inName) {
         Boolean b = this.dataService.roleNameExists(inName);
-        return new ResponseEntity<>(b, HttpStatus.OK);
+        return ResponseEntity.ok(b);
     }
 }
