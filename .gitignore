@@ -38,3 +38,6 @@ build/
 /frontend/node
 /frontend/.angular/cache
 runtime
+
+.DS_Store
+backend/src/main/.DS_Store
