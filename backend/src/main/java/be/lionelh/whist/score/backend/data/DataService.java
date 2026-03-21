@@ -253,7 +253,7 @@ public class DataService {
         List<Draw> ldr = this.drawDao.findDrawsByEvent_Id(inEventId);
         Long lastDrawId = -1L;
         if (!ldr.isEmpty()) {
-            lastDrawId = ldr.get(ldr.size() - 1).getId();
+            lastDrawId = ldr.getLast().getId();
         }
 
         // First create a new Draw record
@@ -292,7 +292,6 @@ public class DataService {
                 this.playerDrawDao.save(playerDraw);
             }
         }
-        ;
         this.playerDrawDao.flush();
 
         e.setStatus(EventStatus.IN_PROGRESS);

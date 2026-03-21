@@ -27,7 +27,6 @@ public class ResultRolePK implements Serializable {
     public ResultRolePK(Role inRole, Result inResult) {
         this.roleID = inRole.getId();
         this.resultID = inResult.getId();
-        ;
     }
 
     public Long getRoleID() {
