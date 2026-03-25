@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Navbar } from './main/components/navbar/navbar';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'wsw-root',
@@ -9,5 +10,9 @@ import { Navbar } from './main/components/navbar/navbar';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('whist-score-frontend');
+  private titleService: Title = inject(Title);
+
+  ngOnInit(): void {
+    this.titleService.setTitle("Whist: gestionnaire de parties");
+  }
 }
