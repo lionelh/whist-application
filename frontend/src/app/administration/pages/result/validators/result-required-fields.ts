@@ -27,19 +27,19 @@ export class ResultRequiredFieldsValidator implements Validator {
       return value !== null && value !== '' && Number(value) !== 0;
     }).length;
 
-    // 4. Calculer le seuil (N-1)
-    const totalRoles = scoreKeys.length;
-    const requiredNonZero = totalRoles > 0 ? totalRoles - 1 : 0;
+    // 4. Validation finale
+    if (nonZeroScoresCount === 0) {
+      return { insufficientScores: true }
+    }
 
-    // 5. Validation finale
-    if (totalRoles > 0 && nonZeroScoresCount < requiredNonZero) {
-      return {
-        insufficientScores: {
-          required: requiredNonZero,
-          actual: nonZeroScoresCount,
-          total: totalRoles
-        }
-      };
+    let totalScore: number = 0;
+    scoreKeys.forEach(key => {
+      const value: number = controls[key].value;
+      totalScore += value;
+    });
+
+    if (totalScore !== 0) {
+      return { badScoresSum: true }
     }
 
     return null;

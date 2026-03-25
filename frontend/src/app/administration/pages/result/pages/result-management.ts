@@ -36,7 +36,11 @@ export class ResultManagementComponent implements OnInit {
 
   get name() { return this.creationForm.controls.name; }
   get contract() { return this.creationForm.controls.contract; }
-  //get roleScores() { return this.creationForm.get('roleScores'); }
+  get anyScoreTouched(): boolean {
+    return this.roleScoresArray.some(roleName => 
+      this.creationForm.get(roleName)?.touched || this.creationForm.get(roleName)?.dirty
+    );
+  }
 
   ngOnInit(): void {
     this.results$ = this._dataService.findallResults();

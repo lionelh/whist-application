@@ -84,13 +84,35 @@
                 </select>
               </div>
 
-              <div class="row">
+              <div class="row mt-3 p-2"
+                   [class.border]="anyScoreTouched"
+                   [class.border-2]="anyScoreTouched"
+                   [class.border-danger]="(creationForm.hasError('insufficientScores') || creationForm.hasError('badScoresSum')) && anyScoreTouched"
+                   [class.border-success]="anyScoreTouched && !creationForm.hasError('insufficientScores') && !creationForm.hasError('badScoresSum')"
+                   [class.rounded]="true">
+
                 @for (role of roleScoresArray; track role) {
-                  <div class="col-6 mb-2">
-                    <label [for]="role" class="control-label">{{ role }}</label>
-                    <input [id]="role" type="number" [formControlName]="role" class="form-control" />
+                  <div class="col-12 mb-2">
+                    <label [for]="role" class="control-label fw-semibold" style="font-size: 0.9rem;">{{ role }}</label>
+                    <input [id]="role" type="number" [formControlName]="role" class="form-control" placeholder="0" />
                   </div>
                 }
+
+                @if (creationForm.errors?.['insufficientScores'] && anyScoreTouched) {
+                  <div class="col-12 mb-2">
+                    <span class="text-danger fw-bold" style="font-size: 0.9rem;">
+                      Au moins 1 score doit être différents de zéro !
+                    </span>
+                  </div>
+                }
+                @if (creationForm.errors?.['badScoresSum'] && anyScoreTouched) {
+                  <div class="col-12 mb-2">
+                    <span class="text-danger fw-bold" style="font-size: 0.9rem;">
+                      La somme des score doit être égale à zéro !
+                    </span>
+                  </div>
+                }
+                
               </div>
 
               <div class="mt-4">
